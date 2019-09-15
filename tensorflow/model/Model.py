@@ -1,18 +1,18 @@
 """https://www.tensorflow.org/beta/guide/effective_tf2
 """
-import os
 import logging
+import os
 
 from tensorflow_core.python.client.session import Session
 from tensorflow_core.python.framework.dtypes import float32
 from tensorflow_core.python.framework.ops import get_collection, GraphKeys
 from tensorflow_core.python.layers.normalization import batch_normalization
+from tensorflow_core.python.ops import metrics_impl
 from tensorflow_core.python.ops.control_flow_ops import group
 from tensorflow_core.python.ops.gen_math_ops import equal
 from tensorflow_core.python.ops.gen_nn_ops import Relu
 from tensorflow_core.python.ops.losses.losses_impl import softmax_cross_entropy
 from tensorflow_core.python.ops.math_ops import reduce_mean, cast
-from tensorflow_core.python.ops import metrics_impl
 from tensorflow_core.python.ops.variable_scope import variable_scope
 from tensorflow_core.python.ops.variables import variables_initializer
 from tensorflow_core.python.summary import summary
