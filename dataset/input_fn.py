@@ -1,4 +1,3 @@
-import tensorflow as tf
 from tensorflow_core.python.data.ops.dataset_ops import Dataset
 from tensorflow_core.python.framework.constant_op import constant
 from tensorflow_core.python.framework.dtypes import float32

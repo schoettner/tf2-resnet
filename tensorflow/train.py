@@ -1,8 +1,13 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import argparse
 import logging
 import sys
 
-from tensorflow_core.python.client.session import Session
+from tensorflow_core.python.client.session import InteractiveSession
+from tensorflow_core.python.framework.ops import disable_eager_execution
 from tensorflow_core.python.platform import tf_logging
 from tensorflow_core.python.training import tensorboard_logging
 
@@ -19,6 +24,8 @@ FLAGS = parser.parse_args()
 def main():
     tf_logging.set_verbosity(tensorboard_logging.DEBUG)
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+    # disable eager for the moment
+    disable_eager_execution()
 
     epochs = FLAGS.epochs
     batch_size = FLAGS.batch_size
@@ -40,7 +47,7 @@ def main():
                                              input_size=input_size, batch_size=batch_size,
                                              epochs=epochs, is_training=False)
     model = ResNet34(num_classes=num_classes)
-    with Session() as sess:
+    with InteractiveSession() as sess:
         model.compile(session=sess,
                       train_inputs=train_inputs, train_steps=train_steps,
                       eval_inputs=eval_inputs, eval_steps=eval_steps,
@@ -48,6 +55,7 @@ def main():
                       )
         model.train(epochs=epochs)
         model.test()
+
 
 if __name__ == "__main__":
     main()

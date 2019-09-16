@@ -1,6 +1,5 @@
 import logging
 
-from tensorflow_core.python.client.session import Session
 from tensorflow_core.python.ops.math_ops import reduce_mean
 from tqdm import trange
 
@@ -8,7 +7,7 @@ from tqdm import trange
 class Trainable(object):
 
     @staticmethod
-    def _train_sess(sess: Session, train_spec: dict, training_steps: int = 10):
+    def _train_sess(sess, train_spec: dict, training_steps: int = 10):
         loss = train_spec['loss']
         train_op = train_spec['train_op']
         update_metrics = train_spec['update_metrics']
@@ -30,7 +29,7 @@ class Trainable(object):
         logging.info("Train metrics: " + metrics_string)
 
     @staticmethod
-    def _eval_sess(sess: Session, eval_spec: dict, eval_steps: int = 10):
+    def _eval_sess(sess, eval_spec: dict, eval_steps: int = 10):
         update_metrics = eval_spec['update_metrics']
         eval_metrics = eval_spec['metrics']
 

@@ -3,7 +3,6 @@
 import logging
 import os
 
-from tensorflow_core.python.client.session import Session
 from tensorflow_core.python.framework.dtypes import float32
 from tensorflow_core.python.framework.ops import get_collection, GraphKeys
 from tensorflow_core.python.layers.normalization import batch_normalization
@@ -27,7 +26,7 @@ class Model(Trainable):
     def build(self, model_inputs, is_training: bool, reuse: bool):
         raise NotImplementedError('Not implemented for abstract model')
 
-    def compile(self, session: Session,
+    def compile(self, session,
                 train_inputs: dict, train_steps: int,
                 eval_inputs: dict, eval_steps: int,
                 test_inputs: dict, test_steps: int, ):

@@ -1,7 +1,3 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 from tensorflow_core.python.ops.variable_scope import variable_scope
 
 from tensorflow.model.ResNet import ResNet

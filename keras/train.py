@@ -1,10 +1,9 @@
 """https://keras.io/examples/cifar10_cnn/
 """
-import logging
-import sys
-import os
 import argparse
-
+import logging
+import os
+import sys
 
 from tensorflow_core.python.keras.callbacks import TensorBoard, EarlyStopping, ModelCheckpoint
 from tensorflow_core.python.keras.datasets import cifar10
