@@ -19,8 +19,10 @@ from tensorflow_core.python.summary import summary
 from tensorflow_core.python.training.adam import AdamOptimizer
 from tensorflow_core.python.training.saver import Saver
 
+from tensorflow.model.Trainable import Trainable
 
-class Model(object):
+
+class Model(Trainable):
 
     def build(self, model_inputs, is_training: bool, reuse: bool):
         raise NotImplementedError('Not implemented for abstract model')
@@ -96,12 +98,6 @@ class Model(object):
                 logging.info("- Found new best accuracy, saving in {}".format(best_save_path))
         logging.info('Training for all epochs complete')
 
-    def _train_sess(self, sess: Session, train_spec: dict):
-        # todo
-        return
-
-    def _eval_sess(self, sess: Session, train_spec: dict):
-        return {'accuracy': 1.0}
 
     @staticmethod
     def _relu(inputs):
