@@ -110,4 +110,4 @@ venv.bak/
 data/
 dataset/
 */output
-*/log
+*/logs

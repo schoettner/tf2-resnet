@@ -3,6 +3,8 @@
 import logging
 import sys
 import os
+import argparse
+
 
 from tensorflow_core.python.keras.callbacks import TensorBoard, EarlyStopping, ModelCheckpoint
 from tensorflow_core.python.keras.datasets import cifar10
@@ -14,14 +16,19 @@ from tensorflow_core.python.training import tensorboard_logging
 
 from keras.model.ModelBuilder import build_small
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--epochs', type=int, default=3)
+parser.add_argument('--batch_size', type=int, default=64)
+FLAGS = parser.parse_args()
+
 
 def main():
     set_verbosity(tensorboard_logging.DEBUG)
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
     num_classes = 10
-    epochs = 2
-    batch_size = 64
+    epochs = FLAGS.epochs
+    batch_size = FLAGS.batch_size
 
     # create dataset
     print('create dataset')
@@ -48,7 +55,7 @@ def main():
     callbacks = [
         TensorBoard(),
         EarlyStopping(patience=2, monitor=loss_to_monitor),
-        ModelCheckpoint(filepath='output',
+        ModelCheckpoint(filepath='output/checkpoint',
                         monitor=loss_to_monitor,
                         verbose=0,
                         save_best_only=True,
@@ -66,13 +73,13 @@ def main():
 
     print('Training completed. Saving Model...')
     save_dir = 'output'
-    model_name = 'keras_example'
+    model_dir = 'model'
     scores = model.evaluate(x_test, y_test, verbose=1)
     print('Test loss:', scores[0])
     print('Test accuracy:', scores[1])
     if not os.path.isdir(save_dir):
         os.makedirs(save_dir)
-    model_path = os.path.join(save_dir, model_name)
+    model_path = os.path.join(save_dir, model_dir)
     model.save(model_path)
     print('Saved trained model at %s ' % model_path)
 
