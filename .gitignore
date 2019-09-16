@@ -108,6 +108,5 @@ venv.bak/
 
 # build dirs
 data/
-dataset/
 */output
 */logs
