@@ -2,23 +2,13 @@
 """
 import logging
 import os
+import tensorflow as tf
 
-from tensorflow_core.python.framework.dtypes import float32
-from tensorflow_core.python.framework.ops import get_collection, GraphKeys
-from tensorflow_core.python.layers.normalization import batch_normalization
-from tensorflow_core.python.ops import metrics_impl
-from tensorflow_core.python.ops.control_flow_ops import group
+
 from tensorflow_core.python.ops.gen_math_ops import equal
 from tensorflow_core.python.ops.gen_nn_ops import Relu
-from tensorflow_core.python.ops.losses.losses_impl import softmax_cross_entropy
-from tensorflow_core.python.ops.math_ops import reduce_mean, cast
-from tensorflow_core.python.ops.variable_scope import variable_scope
-from tensorflow_core.python.ops.variables import variables_initializer
-from tensorflow_core.python.summary import summary
-from tensorflow_core.python.training.adam import AdamOptimizer
-from tensorflow_core.python.training.saver import Saver
 
-from tensorflow.model.Trainable import Trainable
+from tf2.model.Trainable import Trainable
 
 
 class Model(Trainable):
@@ -52,39 +42,39 @@ class Model(Trainable):
         reuse = not is_training
         logits = self.build(images, is_training, reuse)
 
-        loss = softmax_cross_entropy(logits=logits, onehot_labels=labels)
+        loss = tf.losses.softmax_cross_entropy(logits=logits, onehot_labels=labels)
         if is_training:
-            with variable_scope('optimizer'):
-                optimizer = AdamOptimizer()
+            with tf.variable_scope('optimizer'):
+                optimizer = tf.AdamOptimizer()
                 # global step no longer required in tf2
                 # make sure to also get update ops for batch normalization
-                update_ops = get_collection(GraphKeys.UPDATE_OPS)
+                update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
                 train_op = optimizer.minimize(loss)
-                train_op = group([train_op, update_ops])
+                train_op = tf.group([train_op, update_ops])
 
-        with variable_scope('metrics'):
+        with tf.variable_scope('metrics'):
             metrics = {
-                'accuracy': metrics_impl.accuracy(labels=labels, predictions=logits),
-                'loss'    : metrics_impl.mean(loss)
+                'accuracy': tf.metrics.accuracy(labels=labels, predictions=logits),
+                'loss'    : tf.metrics.mean(loss)
             }
-        update_metrics_op = group(*[op for _, op in metrics.values()])
-        metric_variables = get_collection(GraphKeys.LOCAL_VARIABLES, scope='metrics')
-        metrics_init_op = variables_initializer(metric_variables)
+        update_metrics_op = tf.group(*[op for _, op in metrics.values()])
+        metric_variables = tf.get_collection(tf.GraphKeys.LOCAL_VARIABLES, scope='metrics')
+        metrics_init_op = tf.variables_initializer(metric_variables)
 
         # additional summary
-        with variable_scope('summary'):
-            acc = reduce_mean(cast(equal(labels, logits), float32))
+        with tf.variable_scope('summary'):
+            acc = tf.reduce_mean(tf.cast(equal(labels, logits), tf.float32))
 
-        summary.scalar('accuracy', acc)
-        summary.scalar('loss', reduce_mean(loss))
-        summary.image('train_image', images)
+        tf.summary.scalar('accuracy', acc)
+        tf.summary.scalar('loss', tf.reduce_mean(loss))
+        tf.summary.image('train_image', images)
 
         model_spec = inputs
         model_spec['loss'] = loss
         model_spec['accuracy'] = acc
         model_spec['metrics_init_op'] = metrics_init_op
         model_spec['metrics'] = metrics
-        model_spec['summary_op'] = summary.merge_all()
+        model_spec['summary_op'] = tf.summary.merge_all()
         model_spec['update_metrics'] = update_metrics_op
         if is_training:
             model_spec['train_op'] = train_op
@@ -93,8 +83,8 @@ class Model(Trainable):
     def train(self, epochs: int):
         if not self.session:
             raise RuntimeError('Model was no session. Please compile the model before training!')
-        last_saver = Saver(max_to_keep=3)  # keep last 3 epochs
-        best_saver = Saver(max_to_keep=1)  # keep best epoch
+        last_saver = tf.train.Saver(max_to_keep=3)  # keep last 3 epochs
+        best_saver = tf.train.Saver(max_to_keep=1)  # keep best epoch
 
         best_eval_accuracy = 0.0
         last_save_path = os.path.join('output/checkpoints', 'last_weights', 'after-epoch')
@@ -127,7 +117,7 @@ class Model(Trainable):
     def _batch_norm(inputs,
                     is_training: bool,
                     name: str = 'batch_norm'):
-        return batch_normalization(
+        return tf.layers.batch_normalization(
             inputs=inputs,
             name=name,
             axis=3,

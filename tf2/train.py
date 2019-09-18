@@ -1,18 +1,12 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import argparse
 import logging
 import sys
 
-from tensorflow_core.python.client.session import InteractiveSession
-from tensorflow_core.python.framework.ops import disable_eager_execution
-from tensorflow_core.python.platform import tf_logging
+import tensorflow as tf
 from tensorflow_core.python.training import tensorboard_logging
 
 from dataset.dataset import create_dataset, load_data_array, split_dataset
-from tensorflow.model.ResNet34 import ResNet34
+from tf2.model.ResNet34 import ResNet34
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=3)
@@ -22,10 +16,10 @@ FLAGS = parser.parse_args()
 
 
 def main():
-    tf_logging.set_verbosity(tensorboard_logging.DEBUG)
+    tf.logging.set_verbosity(tensorboard_logging.DEBUG)
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     # disable eager for the moment
-    disable_eager_execution()
+    tf.disable_eager_execution()
 
     epochs = FLAGS.epochs
     batch_size = FLAGS.batch_size
@@ -47,7 +41,7 @@ def main():
                                              input_size=input_size, batch_size=batch_size,
                                              epochs=epochs, is_training=False)
     model = ResNet34(num_classes=num_classes)
-    with InteractiveSession() as sess:
+    with tf.InteractiveSession() as sess:
         model.compile(session=sess,
                       train_inputs=train_inputs, train_steps=train_steps,
                       eval_inputs=eval_inputs, eval_steps=eval_steps,
