@@ -1,31 +1,34 @@
-from tensorflow_core.python.keras.engine.sequential import Sequential
-from tensorflow_core.python.keras.layers.convolutional import Conv2D
-from tensorflow_core.python.keras.layers.core import Activation, Dropout, Flatten, Dense
-from tensorflow_core.python.keras.layers.pooling import MaxPooling2D
 
+import tensorflow as tf
 
 def build_small(classes: int, input_shape: () = (32, 32, 3)):
 
-    model = Sequential()
-    model.add(Conv2D(32, (3, 3), padding='same',
-                     input_shape=input_shape))
-    model.add(Activation('relu'))
-    model.add(Conv2D(32, (3, 3)))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
+    model = tf.keras.models.Sequential()
+    model.add(tf.keras.layers.Conv2D(32, (3, 3), padding='same',
+                                     input_shape=input_shape))
+    model.add(tf.keras.layers.Activation('relu'))
+    model.add(tf.keras.layers.Conv2D(32, (3, 3)))
+    model.add(tf.keras.layers.Activation('relu'))
+    model.add(tf.keras.layers.MaxPooling2D(pool_size=(2, 2)))
+    model.add(tf.keras.layers.Dropout(0.25))
 
-    model.add(Conv2D(64, (3, 3), padding='same'))
-    model.add(Activation('relu'))
-    model.add(Conv2D(64, (3, 3)))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
+    model.add(tf.keras.layers.Conv2D(64, (3, 3), padding='same'))
+    model.add(tf.keras.layers.Activation('relu'))
+    model.add(tf.keras.layers.Conv2D(64, (3, 3)))
+    model.add(tf.keras.layers.Activation('relu'))
+    model.add(tf.keras.layers.MaxPooling2D(pool_size=(2, 2)))
+    model.add(tf.keras.layers.Dropout(0.25))
 
-    model.add(Flatten())
-    model.add(Dense(512))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(classes))
-    model.add(Activation('softmax'))
+    model.add(tf.keras.layers.Flatten())
+    model.add(tf.keras.layers.Dense(512))
+    model.add(tf.keras.layers.Activation('relu'))
+    model.add(tf.keras.layers.Dropout(0.5))
+    model.add(tf.keras.layers.Dense(classes))
+    model.add(tf.keras.layers.Activation('softmax'))
+    return model
+
+def build_resnet50(classes: int, input_shape: () = (32, 32, 3)) -> tf.keras.models.Model:
+    model = tf.keras.applications.ResNet50(include_top=False,
+                                           input_shape=input_shape,
+                                           classes=classes)
     return model

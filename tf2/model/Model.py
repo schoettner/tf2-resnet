@@ -6,7 +6,6 @@ import tensorflow as tf
 
 
 from tensorflow_core.python.ops.gen_math_ops import equal
-from tensorflow_core.python.ops.gen_nn_ops import Relu
 
 from tf2.model.Trainable import Trainable
 
@@ -111,7 +110,7 @@ class Model(Trainable):
 
     @staticmethod
     def _relu(inputs):
-        return Relu(inputs)
+        return tf.raw_ops.Relu(inputs)
 
     @staticmethod
     def _batch_norm(inputs,

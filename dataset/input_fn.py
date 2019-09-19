@@ -1,3 +1,4 @@
+# from tensorflow_core.python.data.ops.dataset_ops import Dataset
 from tensorflow_core.python.ops.gen_image_ops import decode_jpeg
 import tensorflow as tf
 
@@ -37,7 +38,8 @@ def input_fn(filenames: [],
     one_hot_fn = lambda f, l: one_hot_encode(f, l, num_classes)
 
     if is_training:
-        dataset = (tf.data.Dataset.from_tensor_slices((tf.constant(filenames), tf.constant(labels)))
+        dataset = (
+            tf.data.Dataset.from_tensor_slices((tf.constant(filenames), tf.constant(labels)))
                    .shuffle(shuffle_size)
                    .repeat(epochs)
                    .map(load_fn, num_parallel_calls=4)
@@ -46,6 +48,7 @@ def input_fn(filenames: [],
                    .batch(batch_size)
                    .prefetch(2)
                    )
+
     else:
         dataset = (tf.data.Dataset.from_tensor_slices((tf.constant(filenames), tf.constant(labels)))
                    .map(load_fn, num_parallel_calls=4)
@@ -53,9 +56,4 @@ def input_fn(filenames: [],
                    .batch(batch_size)
                    .prefetch(1)
                    )
-
-    # Create re-initializable iterator from dataset
-    iterator = dataset.make_initializable_iterator()
-    iterator_init_op = iterator.initializer
-    inputs = {'iterator': iterator, 'iterator_init_op': iterator_init_op}
-    return inputs
+    return dataset
