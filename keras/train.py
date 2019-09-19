@@ -29,19 +29,19 @@ def main():
     train_set = split_dataset(df, 'TRAIN')
     eval_set = split_dataset(df, 'VALIDATION')
     test_set = split_dataset(df, 'TEST')
-    train_ds = create_dataset(data=train_set, num_classes=num_classes,
+    train_ds, train_steps = create_dataset(data=train_set, num_classes=num_classes,
                               input_size=input_size, batch_size=batch_size,
                               epochs=epochs, is_training=True)
-    eval_ds = create_dataset(data=eval_set, num_classes=num_classes,
+    eval_ds, eval_steps = create_dataset(data=eval_set, num_classes=num_classes,
                              input_size=input_size, batch_size=batch_size,
                              epochs=epochs, is_training=False)
-    test_ds = create_dataset(data=test_set, num_classes=num_classes,
+    test_ds, test_steps = create_dataset(data=test_set, num_classes=num_classes,
                              input_size=input_size, batch_size=batch_size,
                              epochs=epochs, is_training=False)
 
     print('Compile Model for Training...')
-    # model = build_resnet50(classes=num_classes)
-    model = build_small(classes=num_classes)
+    model: tf.keras.models.Model = build_resnet50(classes=num_classes, input_shape=(input_size, input_size, 3))
+    # model = build_small(classes=num_classes, input_shape=(input_size, input_size, 3))
     model.compile(optimizer=tf.keras.optimizers.Adam(),
                   loss=tf.keras.losses.categorical_crossentropy,
                   metrics=['acc'])
@@ -62,9 +62,10 @@ def main():
     print('Starting Training...')
     model.fit(train_ds,
               epochs=epochs,
-              callbacks=callbacks,
-              validation_data=eval_ds,
-              validation_freq=1,
+              steps_per_epoch=train_steps
+              # callbacks=callbacks,
+              # validation_data=eval_ds,
+              # validation_freq=1,
               )
 
     print('Training completed. Saving Model...')
