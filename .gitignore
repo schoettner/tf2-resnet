@@ -110,3 +110,5 @@ venv.bak/
 data/
 */output
 */logs
+logs/
+output/

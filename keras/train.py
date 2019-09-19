@@ -62,10 +62,11 @@ def main():
     print('Starting Training...')
     model.fit(train_ds,
               epochs=epochs,
-              steps_per_epoch=train_steps
-              # callbacks=callbacks,
-              # validation_data=eval_ds,
-              # validation_freq=1,
+              steps_per_epoch=train_steps,
+              callbacks=callbacks,
+              validation_data=eval_ds,
+              validation_steps=eval_steps,
+              validation_freq=1,
               )
 
     print('Training completed. Saving Model...')
