@@ -10,7 +10,7 @@ def load_img(filename: str, label, size: int):
     image_string = tf.io.read_file(filename)
     image_decoded = decode_jpeg(image_string, channels=3)
     image = tf.image.convert_image_dtype(image_decoded, tf.float32)
-    resized_image = tf.image.resize_images(image, [size, size])
+    resized_image = tf.image.resize(image, [size, size])
     return resized_image, label
 
 

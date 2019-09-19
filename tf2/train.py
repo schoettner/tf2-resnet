@@ -16,16 +16,16 @@ FLAGS = parser.parse_args()
 
 
 def main():
-    tf.logging.set_verbosity(tensorboard_logging.DEBUG)
+    # tf.logging.set_verbosity('DEBUG')
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     # disable eager for the moment
-    tf.disable_eager_execution()
+    # tf.disable_eager_execution()
 
     epochs = FLAGS.epochs
     batch_size = FLAGS.batch_size
     input_size = FLAGS.input_size
 
-    df, labels = load_data_array('dataset.csv')
+    df, labels = load_data_array('data/dataset.csv')
     num_classes = len(labels)
     train_set = split_dataset(df, 'TRAIN')
     eval_set = split_dataset(df, 'VALIDATION')
