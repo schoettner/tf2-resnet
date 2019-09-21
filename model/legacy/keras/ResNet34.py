@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tensorflow_core.python.keras.engine.training import Model
+
 
 from model.legacy.keras.ResNet import ResNet
 
