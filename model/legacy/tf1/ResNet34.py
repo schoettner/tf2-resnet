@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tf2.model.ResNet import ResNet
+from model.legacy.tf1.ResNet import ResNet
 
 
 class ResNet34(ResNet):

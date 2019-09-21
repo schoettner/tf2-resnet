@@ -7,7 +7,7 @@ import tensorflow as tf
 
 from tensorflow_core.python.ops.gen_math_ops import equal
 
-from tf2.model.Trainable import Trainable
+from model.legacy.tf1.Trainable import Trainable
 
 
 class Model(Trainable):

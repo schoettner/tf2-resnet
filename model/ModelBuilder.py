@@ -1,6 +1,7 @@
 
 import tensorflow as tf
 
+
 def build_small(classes: int, input_shape: () = (32, 32, 3)):
 
     model = tf.keras.models.Sequential()
@@ -26,6 +27,7 @@ def build_small(classes: int, input_shape: () = (32, 32, 3)):
     model.add(tf.keras.layers.Dense(classes))
     model.add(tf.keras.layers.Activation('softmax'))
     return model
+
 
 def build_resnet50(classes: int, input_shape: () = (224, 224, 3)) -> tf.keras.models.Model:
     base_model = tf.keras.applications.ResNet50(include_top=False,

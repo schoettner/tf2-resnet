@@ -3,10 +3,9 @@ import logging
 import sys
 
 import tensorflow as tf
-from tensorflow_core.python.training import tensorboard_logging
 
 from dataset.dataset import create_dataset, load_data_array, split_dataset
-from tf2.model.ResNet34 import ResNet34
+from model.legacy.tf1.ResNet34 import ResNet34
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=3)

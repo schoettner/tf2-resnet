@@ -7,7 +7,7 @@ import tensorflow as tf
 
 
 from dataset.dataset import load_data_array, split_dataset, create_dataset
-from keras.model.ModelBuilder import build_small, build_resnet50
+from model.ModelBuilder import build_resnet50
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=3)
