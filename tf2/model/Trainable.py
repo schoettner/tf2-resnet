@@ -1,6 +1,6 @@
 import logging
 
-from tensorflow_core.python.ops.math_ops import reduce_mean
+import tensorflow as tf
 from tqdm import trange
 
 
@@ -20,7 +20,7 @@ class Trainable(object):
         training_steps = trange(training_steps)
         for _ in training_steps:
             _, _, loss_val = sess.run([train_op, update_metrics, loss])
-            reduced_loss = sess.run(reduce_mean(loss_val))
+            reduced_loss = sess.run(tf.reduce_mean(loss_val))
             training_steps.set_postfix(loss='losses: {:05.3f}'.format(reduced_loss))
 
         metrics_values = {k: v[0] for k, v in metrics.items()}

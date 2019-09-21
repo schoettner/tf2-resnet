@@ -1,79 +1,78 @@
-"""https://keras.io/examples/cifar10_cnn/
-"""
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import argparse
-import logging
 import os
-import sys
 
-from tensorflow_core.python.keras.callbacks import TensorBoard, EarlyStopping, ModelCheckpoint
-from tensorflow_core.python.keras.datasets import cifar10
-from tensorflow_core.python.keras.losses import categorical_crossentropy
-from tensorflow_core.python.keras.optimizer_v2.adam import Adam
-from tensorflow_core.python.keras.utils.np_utils import to_categorical
-from tensorflow_core.python.platform.tf_logging import set_verbosity
-from tensorflow_core.python.training import tensorboard_logging
+import tensorflow as tf
 
-from keras.model.ModelBuilder import build_small
+
+from dataset.dataset import load_data_array, split_dataset, create_dataset
+from keras.model.ModelBuilder import build_small, build_resnet50
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=3)
 parser.add_argument('--batch_size', type=int, default=64)
+parser.add_argument('--input_size', type=int, default=224)
 FLAGS = parser.parse_args()
 
 
 def main():
-    set_verbosity(tensorboard_logging.DEBUG)
-    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+    print(tf.__version__)
 
-    num_classes = 10
     epochs = FLAGS.epochs
+    input_size = FLAGS.input_size
     batch_size = FLAGS.batch_size
 
-    # create dataset
-    print('create dataset')
-    (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-    print('x_train shape:', x_train.shape)
-    print(x_train.shape[0], 'train samples')
-    print(x_test.shape[0], 'test samples')
-    # Convert class vectors to binary class matrices.
-    y_train = to_categorical(y_train, num_classes)
-    y_test = to_categorical(y_test, num_classes)
-    x_train = x_train.astype('float32')
-    x_test = x_test.astype('float32')
-    x_train /= 255
-    x_test /= 255
+    print('Create Datasets...')
+    df, labels = load_data_array('data/dataset.csv')
+    num_classes = len(labels)
+    train_set = split_dataset(df, 'TRAIN')
+    eval_set = split_dataset(df, 'VALIDATION')
+    test_set = split_dataset(df, 'TEST')
+    train_ds, train_steps = create_dataset(data=train_set, num_classes=num_classes,
+                              input_size=input_size, batch_size=batch_size,
+                              epochs=epochs, is_training=True)
+    eval_ds, eval_steps = create_dataset(data=eval_set, num_classes=num_classes,
+                             input_size=input_size, batch_size=batch_size,
+                             epochs=epochs, is_training=False)
+    test_ds, test_steps = create_dataset(data=test_set, num_classes=num_classes,
+                             input_size=input_size, batch_size=batch_size,
+                             epochs=epochs, is_training=False)
 
-    print('Compile Model for Training')
-    model = build_small(classes=num_classes)
-    model.compile(optimizer=Adam(),
-                  loss=categorical_crossentropy,
+    print('Compile Model for Training...')
+    model: tf.keras.models.Model = build_resnet50(classes=num_classes, input_shape=(input_size, input_size, 3))
+    # model = build_small(classes=num_classes, input_shape=(input_size, input_size, 3))
+    model.compile(optimizer=tf.keras.optimizers.Adam(),
+                  loss=tf.keras.losses.categorical_crossentropy,
                   metrics=['acc'])
     model.summary()
 
     loss_to_monitor = 'val_loss'
     callbacks = [
-        TensorBoard(),
-        EarlyStopping(patience=2, monitor=loss_to_monitor),
-        ModelCheckpoint(filepath='output/checkpoint',
+        tf.keras.callbacks.TensorBoard(),
+        tf.keras.callbacks.EarlyStopping(patience=2, monitor=loss_to_monitor),
+        tf.keras.callbacks.ModelCheckpoint(filepath='output/checkpoint',
                         monitor=loss_to_monitor,
                         verbose=0,
                         save_best_only=True,
                         mode='auto',
-                        period=1)
+                        save_freq=1)
     ]
 
-    print('Starting Training')
-    model.fit(x_train, y_train,
-              batch_size=batch_size,
+    print('Starting Training...')
+    model.fit(train_ds,
               epochs=epochs,
+              steps_per_epoch=train_steps,
               callbacks=callbacks,
-              validation_data=(x_test, y_test),
-              shuffle=True)
+              validation_data=eval_ds,
+              validation_steps=eval_steps,
+              validation_freq=1,
+              )
 
     print('Training completed. Saving Model...')
     save_dir = 'output'
     model_dir = 'model'
-    scores = model.evaluate(x_test, y_test, verbose=1)
+    scores = model.evaluate(test_ds, verbose=1)
     print('Test loss:', scores[0])
     print('Test accuracy:', scores[1])
     if not os.path.isdir(save_dir):
