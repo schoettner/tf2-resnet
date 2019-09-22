@@ -1,6 +1,5 @@
 import tensorflow as tf
 
-
 from model.legacy.keras.ResNet import ResNet
 
 

@@ -62,6 +62,7 @@ class ResNet:
             conv_kernel = tf.random_uniform((1, 1, filters, filters * 2))
             shortcut_layer = tf.keras.backend.conv2d(x=block_input,
                                                      kernel=conv_kernel,
+                                                     strides=stride,
                                                      padding='valid')
         return tf.keras.layers.add([shortcut_layer, conv2])
 
@@ -90,6 +91,7 @@ class ResNet:
             conv_kernel = tf.random_uniform((1, 1, filters, filters * 2))
             shortcut_layer = tf.keras.backend.conv2d(x=block_input,
                                                      kernel=conv_kernel,
+                                                     strides=stride,
                                                      padding='valid')
         return tf.keras.layers.add([shortcut_layer, conv3])
 

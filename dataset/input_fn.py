@@ -1,6 +1,6 @@
 # from tensorflow_core.python.data.ops.dataset_ops import Dataset
-from tensorflow_core.python.ops.gen_image_ops import decode_jpeg
 import tensorflow as tf
+from tensorflow_core.python.ops.gen_image_ops import decode_jpeg
 
 
 def one_hot_encode(image, label, num_classes: int):
@@ -32,7 +32,6 @@ def input_fn(filenames: [],
              batch_size: int,
              epochs: int,
              is_training: bool):
-
     load_fn = lambda f, l: load_img(f, l, input_size)
     augment_fn = lambda f, l: augment_img(f, l)
     one_hot_fn = lambda f, l: one_hot_encode(f, l, num_classes)
@@ -40,14 +39,14 @@ def input_fn(filenames: [],
     if is_training:
         dataset = (
             tf.data.Dataset.from_tensor_slices((tf.constant(filenames), tf.constant(labels)))
-                   .shuffle(shuffle_size)
-                   .repeat(epochs)
-                   .map(load_fn, num_parallel_calls=4)
-                   .map(augment_fn, num_parallel_calls=4)
-                   .map(one_hot_fn, num_parallel_calls=4)
-                   .batch(batch_size)
-                   .prefetch(2)
-                   )
+                .shuffle(shuffle_size)
+                .repeat(epochs)
+                .map(load_fn, num_parallel_calls=4)
+                .map(augment_fn, num_parallel_calls=4)
+                .map(one_hot_fn, num_parallel_calls=4)
+                .batch(batch_size)
+                .prefetch(2)
+        )
 
     else:
         dataset = (tf.data.Dataset.from_tensor_slices((tf.constant(filenames), tf.constant(labels)))

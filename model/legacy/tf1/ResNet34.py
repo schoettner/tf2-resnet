@@ -1,4 +1,5 @@
 import tensorflow as tf
+
 from model.legacy.tf1.ResNet import ResNet
 
 

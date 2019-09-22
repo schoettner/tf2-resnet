@@ -2,9 +2,8 @@
 """
 import logging
 import os
+
 import tensorflow as tf
-
-
 from tensorflow_core.python.ops.gen_math_ops import equal
 
 from model.legacy.tf1.Trainable import Trainable
@@ -25,7 +24,8 @@ class Model(Trainable):
         self.test_steps = test_steps
 
         # initiate the iterators
-        session.run([train_inputs['iterator_init_op'], eval_inputs['iterator_init_op'], test_inputs['iterator_init_op']])
+        session.run(
+            [train_inputs['iterator_init_op'], eval_inputs['iterator_init_op'], test_inputs['iterator_init_op']])
         x_train, y_train = train_inputs['iterator'].get_next()
         x_eval, y_eval = eval_inputs['iterator'].get_next()
         x_test, y_test = test_inputs['iterator'].get_next()
@@ -54,7 +54,7 @@ class Model(Trainable):
         with tf.variable_scope('metrics'):
             metrics = {
                 'accuracy': tf.metrics.accuracy(labels=labels, predictions=logits),
-                'loss'    : tf.metrics.mean(loss)
+                'loss': tf.metrics.mean(loss)
             }
         update_metrics_op = tf.group(*[op for _, op in metrics.values()])
         metric_variables = tf.get_collection(tf.GraphKeys.LOCAL_VARIABLES, scope='metrics')
@@ -96,7 +96,8 @@ class Model(Trainable):
             last_saver.save(self.session, last_save_path, global_step=epoch + 1)
 
             # evaluate
-            eval_accuracy = self._eval_sess(sess=self.session, eval_spec=self.eval_spec, eval_steps=self.eval_steps)['accuracy']
+            eval_accuracy = self._eval_sess(sess=self.session, eval_spec=self.eval_spec, eval_steps=self.eval_steps)[
+                'accuracy']
             if eval_accuracy > best_eval_accuracy:
                 best_eval_accuracy = eval_accuracy
                 best_save_path = best_saver.save(self.session, best_save_path, global_step=epoch + 1)
