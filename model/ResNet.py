@@ -21,7 +21,7 @@ class ResNet:
         relu = tf.keras.layers.ReLU()(bn)
         conv = tf.keras.layers.Conv2D(filters=filters,
                                       kernel_size=kernel_size,
-                                      # kernel_regularizer=tf.keras.regularizers.l2,
+                                      kernel_regularizer=tf.keras.regularizers.l2(),
                                       strides=strides,
                                       padding=padding)(relu)
         return conv
@@ -34,7 +34,7 @@ class ResNet:
                         padding='same') -> tf.keras.layers.Layer:
         conv = tf.keras.layers.Conv2D(filters=filters,
                                       kernel_size=kernel_size,
-                                      # kernel_regularizer=tf.keras.regularizers.l2,
+                                      kernel_regularizer=tf.keras.regularizers.l2(),
                                       strides=strides,
                                       padding=padding)(inputs)
         bn = tf.keras.layers.BatchNormalization(axis=self.bn_axis)(conv)
@@ -62,7 +62,7 @@ class ResNet:
         if adjust_strides:
             shortcut_layer = tf.keras.layers.Conv2D(filters=filters,
                                                     kernel_size=(1, 1),
-                                                    # kernel_regularizer=tf.keras.regularizers.l2,
+                                                    kernel_regularizer=tf.keras.regularizers.l2(),
                                                     strides=stride,
                                                     padding='valid')(block_input)
         return tf.keras.layers.Add()([shortcut_layer, conv2])
@@ -91,7 +91,7 @@ class ResNet:
         if adjust_strides:
             shortcut_layer = tf.keras.layers.Conv2D(filters=filters,
                                                     kernel_size=(1, 1),
-                                                    # kernel_regularizer=tf.keras.regularizers.l2,
+                                                    kernel_regularizer=tf.keras.regularizers.l2(),
                                                     strides=stride,
                                                     padding='valid')(block_input)
         return tf.keras.layers.Add()([shortcut_layer, conv3])
@@ -116,6 +116,6 @@ class ResNet:
         flatt = tf.keras.layers.Flatten()(pool)
         dense = tf.keras.layers.Dense(units=self.num_classes,
                                       name='logits',
-                                      # kernel_regularizer=tf.keras.regularizers.l2,
+                                      kernel_regularizer=tf.keras.regularizers.l2(),
                                       activation='softmax')(flatt)
         return dense

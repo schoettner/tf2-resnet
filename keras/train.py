@@ -55,7 +55,8 @@ def main():
                                            verbose=0,
                                            save_best_only=True,
                                            mode='auto',
-                                           save_freq=1)
+                                           # save_freq=1, # if you wanna try to save after each training step
+                                           )
     ]
 
     print('Starting Training...')
