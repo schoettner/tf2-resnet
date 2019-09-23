@@ -1,10 +1,8 @@
 import argparse
-import logging
-import sys
-
 import tensorflow as tf
 
 from dataset.dataset import create_dataset, load_data_array, split_dataset
+from model.ModelBuilder import build_resnet34
 from model.legacy.tf1.ResNet34 import ResNet34
 
 parser = argparse.ArgumentParser()
@@ -13,15 +11,15 @@ parser.add_argument('--batch_size', type=int, default=64)
 parser.add_argument('--input_size', type=int, default=224)
 FLAGS = parser.parse_args()
 
-model = ResNet34(num_classes=10)
-loss_object = tf.keras.losses.SparseCategoricalCrossentropy()
+model = build_resnet34(classes=10, input_shape=(224, 224, 3))
+loss_fn = tf.keras.losses.CategoricalCrossentropy()
 optimizer = tf.keras.optimizers.Adam()
 train_loss = tf.keras.metrics.Mean(name='train_loss')
-train_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='train_accuracy')
+train_accuracy = tf.keras.metrics.CategoricalAccuracy(name='train_accuracy')
 eval_loss = tf.keras.metrics.Mean(name='eval_loss')
-eval_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='eval_accuracy')
+eval_accuracy = tf.keras.metrics.CategoricalAccuracy(name='eval_accuracy')
 test_loss = tf.keras.metrics.Mean(name='test_loss')
-test_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='test_accuracy')
+test_accuracy = tf.keras.metrics.CategoricalAccuracy(name='test_accuracy')
 
 
 def main():
@@ -51,10 +49,10 @@ def main():
     for epoch in range(epochs):
         # train
         for image_batch, label_batch in train_ds:
-            train_step(image_batch, labels)
+            train_step(image_batch, label_batch)
         # eval
         for image_batch, label_batch in eval_ds:
-            eval_steps(image_batch, label_batch)
+            eval_step(image_batch, label_batch)
         # print results
         print(template.format(epoch+1,
                               train_loss.result(),
@@ -76,10 +74,9 @@ def main():
 def train_step(image_batch, label_batch):
     with tf.GradientTape() as tape:
         predictions = model(image_batch)
-        loss = loss_object(label_batch, predictions)
+        loss = loss_fn(label_batch, predictions)
     gradients = tape.gradient(loss, model.trainable_variables)
     optimizer.apply_gradients(zip(gradients, model.trainable_variables))
-
     train_loss(loss)
     train_accuracy(label_batch, predictions)
 
@@ -87,16 +84,15 @@ def train_step(image_batch, label_batch):
 @tf.function
 def eval_step(image_batch, label_batch):
     predictions = model(image_batch)
-    t_loss = loss_object(label_batch, predictions)
-
-    eval_loss(t_loss)
+    e_loss = loss_fn(label_batch, predictions)
+    eval_loss(e_loss)
     eval_accuracy(label_batch, predictions)
+
 
 @tf.function
 def test_step(image_batch, label_batch):
     predictions = model(image_batch)
-    t_loss = loss_object(label_batch, predictions)
-
+    t_loss = loss_fn(label_batch, predictions)
     test_loss(t_loss)
     test_accuracy(label_batch, predictions)
 
