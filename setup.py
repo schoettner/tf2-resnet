@@ -8,7 +8,7 @@ URL = 'https://github.com/schoettner/tf2-resnet'
 
 # add packages that are missing on the ai-platform training vm
 REQUIRED_PACKAGES = [
-    'pillow', # required for the food 101 dataset
+    'pillow',  # required for the food 101 dataset
     'tensorflow_datasets>=2.1.0',
 ]
 

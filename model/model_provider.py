@@ -87,7 +87,7 @@ def get_callbacks(args: Namespace) -> [tf.keras.callbacks.Callback]:
     checkpoint_path = os.path.join(args.job_dir, args.id, 'training/checkpoint/best')
     # lr_plateau = tf.keras.callbacks.ReduceLROnPlateau(monitor=loss_to_monitor, min_lr=1e-6)
 
-    tb = tf.keras.callbacks.TensorBoard(log_dir=tensorboard_path)
+    tb = tf.keras.callbacks.TensorBoard(log_dir=tensorboard_path, profile_batch=2)
     checkpoint = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
                                                     save_weights_only=True,
                                                     save_best_only=True)
