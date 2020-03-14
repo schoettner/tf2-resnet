@@ -1,0 +1,10 @@
+trainingInput:
+  useChiefInTfConfig: True
+  scaleTier: CUSTOM
+  masterType: standard_v100
+  workerType: standard_v100
+  parameterServerType: standard
+  workerCount: 0
+  parameterServerCount: 0
+  runtimeVersion: '2.1'
+  pythonVersion: '3.7'
