@@ -1,3 +1,4 @@
-tensorflow==2.0.0
-pandas
-tqdm
+tensorflow==2.1.0
+tensorflow_datasets>=2.1.0
+pillow
+argparse
